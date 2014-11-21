@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<VitrualInput>
+	<name>
+		Default
+	</name>
+	<description>
+		No key mapping
+	</description>
+	<detect_mode>
+		key
+	</detect_mode>
+	<move_type>
+		absolute
+	</move_type>
+	<key1>
+		-1 -1 -1 -1
+	</key1>
+	<key2>
+		-1 -1 -1 -1
+	</key2>
+	<key3>
+		-1 -1 -1 -1
+	</key3>
+	<button>
+		-1 -1 -1 -1
+	</button>
+</Vitrualinput>
+<!-- Order: left right up down -->
+<!-- detect_mode: key, mouse, and any (for using key and mouse at the same time, only effective on PC -->
+<!-- move_type: absolute or relative -->
