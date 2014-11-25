@@ -71,6 +71,139 @@ int XMLTool::setupVirtualInputKeyMap(const char *file_name, std::vector<std::vec
 		
 }
 
+int XMLTool::setupBinaryFilter(const char *file_name, std::vector<std::vector<int> > &boundary_array)
+{
+		std::string XML_header, XML_name, XML_description, XML_tag;
+        std::ifstream XML_file;
+        XML_file.open(file_name, std::ios::in);
+        if(!XML_file.good()) return -1;
+		while (!XML_file.eof()) {
+            getline(XML_file, XML_tag);
+            if (XML_tag.find("<lower1>")!=std::string::npos) {
+					XML_file >> boundary_array[0][0];		
+			}
+            if (XML_tag.find("<upper1>")!=std::string::npos) {
+					XML_file >> boundary_array[0][1];		
+			}
+            if (XML_tag.find("<lower2>")!=std::string::npos) {
+					XML_file >> boundary_array[1][0];		
+			}
+            if (XML_tag.find("<upper2>")!=std::string::npos) {
+					XML_file >> boundary_array[1][1];		
+			}
+            if (XML_tag.find("<lower3>")!=std::string::npos) {
+					XML_file >> boundary_array[2][0];		
+			}
+            if (XML_tag.find("<upper3>")!=std::string::npos) {
+					XML_file >> boundary_array[2][1];		
+			}
+		}
+		XML_file.close();
+		return 0;
+}
+
+int XMLTool::setupCvRGBCamera(const char *file_name, std::vector<std::vector<int> > &camera_array)
+{
+		std::string XML_header, XML_name, XML_description, XML_tag;
+        std::ifstream XML_file;
+        XML_file.open(file_name, std::ios::in);
+        if(!XML_file.good()) return -1;
+		while (!XML_file.eof()) {
+            getline(XML_file, XML_tag);
+            if (XML_tag.find("<camera_id>")!=std::string::npos) {
+					XML_file >> camera_array[0][0];
+			}
+            if (XML_tag.find("<camera_x>")!=std::string::npos) {
+					XML_file >> camera_array[0][1];
+			}
+            if (XML_tag.find("<camera_y>")!=std::string::npos) {
+					XML_file >> camera_array[0][2];
+			}
+            if (XML_tag.find("<camera_fps>")!=std::string::npos) {
+					XML_file >> camera_array[0][3];
+			}
+            if (XML_tag.find("<camera_brightness>")!=std::string::npos) {
+					XML_file >> camera_array[0][4];
+			}
+            if (XML_tag.find("<camera_contrast>")!=std::string::npos) {
+					XML_file >> camera_array[0][5];
+			}
+		}
+		XML_file.close();
+		return 0;
+}
+
+int XMLTool::setupGestureThreshold(const char *file_name, std::vector<std::vector<int> > &threshold_array)
+{
+        std::string XML_header, XML_name, XML_description, XML_tag;
+        std::ifstream XML_file;
+        XML_file.open(file_name, std::ios::in);
+        if(!XML_file.good()) return -1;
+		while (!XML_file.eof()) {
+            getline(XML_file, XML_tag);
+            if (XML_tag.find("<threshold_key_left>")!=std::string::npos) {
+					XML_file >> threshold_array[0][0];
+			}
+            if (XML_tag.find("<threshold_key_right>")!=std::string::npos) {
+					XML_file >> threshold_array[0][1];
+			}
+            if (XML_tag.find("<threshold_key_up>")!=std::string::npos) {
+					XML_file >> threshold_array[0][2];
+			}
+            if (XML_tag.find("<threshold_key_down>")!=std::string::npos) {
+					XML_file >> threshold_array[0][3];
+			}
+            if (XML_tag.find("<threshold_move_x>")!=std::string::npos) {
+					XML_file >> threshold_array[0][4];
+			}
+            if (XML_tag.find("<threshold_move_y>")!=std::string::npos) {
+					XML_file >> threshold_array[0][5];
+			}
+            if (XML_tag.find("<count_threshold_short>")!=std::string::npos) {
+					XML_file >> threshold_array[0][6];
+			}
+            if (XML_tag.find("<count_threshold_long>")!=std::string::npos) {
+					XML_file >> threshold_array[0][7];
+			}
+            if (XML_tag.find("<move_factor>")!=std::string::npos) {
+					XML_file >> threshold_array[0][8];
+			}
+            if (XML_tag.find("<move_step>")!=std::string::npos) {
+					XML_file >> threshold_array[0][9];
+			}
+		}
+        XML_file.close();
+        return 0;
+}
+
+int XMLTool::setupROI(const char *file_name, std::vector<std::vector<int> > &ROI_array)
+{
+        std::string XML_header, XML_name, XML_description, XML_tag;
+        std::ifstream XML_file;
+        XML_file.open(file_name, std::ios::in);
+        if(!XML_file.good()) return -1;
+		while (!XML_file.eof()) {
+            getline(XML_file, XML_tag);
+            if (XML_tag.find("<cut_x_lower>")!=std::string::npos) {
+					XML_file >> ROI_array[0][0];
+			}
+            if (XML_tag.find("<cut_x_upper>")!=std::string::npos) {
+					XML_file >> ROI_array[0][1];
+			}
+            if (XML_tag.find("<cut_y_lower>")!=std::string::npos) {
+					XML_file >> ROI_array[0][2];
+			}
+            if (XML_tag.find("<cut_y_upper>")!=std::string::npos) {
+					XML_file >> ROI_array[0][3];
+			}
+            if (XML_tag.find("<sum_threshold>")!=std::string::npos) {
+					XML_file >> ROI_array[0][4];
+			}
+		}
+        XML_file.close();
+        return 0;
+}
+
 int XMLTool::openXML(char *file_name, int mode)
 {
 //mode: 0 = read, 1 = write
