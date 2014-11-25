@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<CvRGBCamera>
+	<camera_x>
+		160
+	</camera_x>
+	<camera_y>
+		120
+	</camera_y>
+	<camera_fps>
+		15
+	</camera_fps>
+	<camera_brightness>
+		1
+	</camera_brightness>
+	<camera_contrast>
+		1
+	</camera_contrast>
+</CvRGBCamera>

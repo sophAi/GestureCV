@@ -32,8 +32,8 @@ int CvRGBCamera::setup(int width,
 		this->capture->set(cv::CAP_PROP_FRAME_WIDTH, width);
 		this->capture->set(cv::CAP_PROP_FRAME_HEIGHT, height);
 		this->capture->set(cv::CAP_PROP_FPS, fps);
-		this->capture->set(cv::CAP_PROP_BRIGHTNESS, brightness);
-		this->capture->set(cv::CAP_PROP_CONTRAST, contrast);
+//		this->capture->set(cv::CAP_PROP_BRIGHTNESS, brightness);
+//		this->capture->set(cv::CAP_PROP_CONTRAST, contrast);
 		cv::Mat elem_erode(5, 5, CV_8U, cv::Scalar(1));
         cv::Mat elem_dilate(5, 5, CV_8U, cv::Scalar(1));
         return 0;

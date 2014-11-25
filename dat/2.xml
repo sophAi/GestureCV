@@ -1,22 +1,22 @@
 <?xml version="1.0" standalone="yes" encoding="UTF-8"?>
 <VitrualInput>
 	<name>
-		Touch Pad Emulator
+		tmux switching
 	</name>
 	<description>
-		Simulate touch pad
+		Ctrl/Alt , or .
 	</description>
 	<detect_mode>
-		mouse
+		key
 	</detect_mode>
 	<move_type>
-		relative
+		absolute
 	</move_type>
 	<key1>
-		-1 -1 -1 -1
+		56 56 -1 -1
 	</key1>
 	<key2>
-		-1 -1 -1 -1
+		51 52 -1 -1
 	</key2>
 	<key3>
 		-1 -1 -1 -1

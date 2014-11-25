@@ -26,6 +26,13 @@ class XMLTool
 
 		int setupVirtualInputKeyMap(const char *file_name, std::vector<std::vector<int> > &key_array);
 
+		int setupBinaryFilter(const char *file_name, std::vector<std::vector<int> > &boundary_array);
+
+		int setupCvRGBCamera(const char *file_name, std::vector<std::vector<int> > &camera_array);
+
+		int setupGestureThreshold(const char *file_name, std::vector<std::vector<int> > &threshold_array);
+	
+		int setupROI(const char *file_name, std::vector<std::vector<int> > &ROI_array);
 
 	private:
 
