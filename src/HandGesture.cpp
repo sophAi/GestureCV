@@ -76,12 +76,12 @@ int main(int argc, char **argv)
 		int ROI_y_length = ROI_y_upper - ROI_y_lower + 1;
 		int ROI_sum_threshold = ROI_array[0][4];
 
-        int threshold_key_x_left = threshold_array[0][0];//6;
+		int threshold_key_x_left = threshold_array[0][0];//6;
 		int threshold_key_x_right = threshold_array[0][1];
-        int threshold_key_y_up = threshold_array[0][2];//5;
+		int threshold_key_y_up = threshold_array[0][2];//5;
 		int threshold_key_y_down = threshold_array[0][3] ;
-        int threshold_move_x = threshold_array[0][4];// 2;
-        int threshold_move_y = threshold_array[0][5];// 2;
+		int threshold_move_x = threshold_array[0][4];// 2;
+		int threshold_move_y = threshold_array[0][5];// 2;
 		int count_threshold_short = threshold_array[0][6];
 		int count_threshold_long = threshold_array[0][7];;
 		int move_factor = threshold_array[0][8];
@@ -98,8 +98,8 @@ int main(int argc, char **argv)
 //		int upper1 = 50;
 //		int lower2 = 50;
 //		int upper2 = 173;
-//		int lower3 = 20; //20
-//		int upper3 = 230;//230;
+//		int lower3 = 20;
+//		int upper3 = 230;
 
 		int lower1 = boundary_array[0][0];  //H_upper H/2; 0-180
 		int upper1 = boundary_array[0][1];  //H_upper 
