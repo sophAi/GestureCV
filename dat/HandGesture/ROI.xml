@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<ROI>
+	<cut_x_lower>
+		0
+	</cut_x_lower>
+	<cut_x_upper>
+		0
+	</cut_x_upper>
+	<cut_y_lower>
+		0
+	</cut_y_lower>
+	<cut_y_upper>
+		0
+	</cut_y_upper>
+	<sum_threshold>
+		1200
+	</sum_threshold>
+</ROI>

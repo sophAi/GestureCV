@@ -1,12 +1,12 @@
-/* ======================================================================
+/* ============================================================
 File Name     : ScreenTool.h
 Creation Time : 20141030 17:31:39
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
-#ifndef sophAi_ScreenTool_H_
-#define sophAi_ScreenTool_H_
+=============================================================== */
+#ifndef sophAi_modules_ScreenTool_H_
+#define sophAi_modules_ScreenTool_H_
 
 #include <X11/Xlib.h>
 

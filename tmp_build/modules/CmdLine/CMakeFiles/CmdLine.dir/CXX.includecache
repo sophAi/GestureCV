@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../modules/CmdLine/include/CmdLine.h
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+getopt.h
+-
+string.h
+-
+errno.h
+-
+iostream
+-
+
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/CmdLine/src/CmdLine.cpp
+CmdLine.h
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/CmdLine/src/CmdLine.h
+

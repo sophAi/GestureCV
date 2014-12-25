@@ -1,10 +1,10 @@
-/* ======================================================================
+/* ============================================================
 File Name     : HandGesture.cpp
 Creation Time : 20141015 15:14:24
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
+=============================================================== */
 #include "CmdLine.h"
 #include "CvRGBCamera.h"
 #include "Distribution.h"
@@ -15,17 +15,9 @@ See the README file in the top-level directory for license.
 int main(int argc, char **argv)
 {
 		module_XMLTool::XMLTool *pXMLTool = new module_XMLTool::XMLTool();
-		std::string dat_path = "dat/";
+		std::string xml_path = "dat/HandGesture/";
 
-		std::string VirtualInput_XML_file_name = dat_path;
-		VirtualInput_XML_file_name.append("0.xml");
-		std::vector<std::vector<int> > key_array(5, std::vector<int> (4) );
-		if(pXMLTool->setupVirtualInputKeyMap(VirtualInput_XML_file_name.c_str(), key_array) != 0) {
-				std::cerr << "Error! Cannot initial kep map" << std::endl;
-				exit(-1);
-		}
-
-		std::string BinaryFilter_XML_file_name = dat_path;
+		std::string BinaryFilter_XML_file_name = xml_path;
 		BinaryFilter_XML_file_name.append("BinaryFilter.xml");
 		std::vector<std::vector<int> > boundary_array(3, std::vector<int> (2) );
 		if(pXMLTool->setupBinaryFilter(BinaryFilter_XML_file_name.c_str(), boundary_array) != 0) {
@@ -33,36 +25,44 @@ int main(int argc, char **argv)
 				exit(-1);
 		}
 
-		std::string CvRGBCamera_XML_file_name = dat_path;
+		std::string CvRGBCamera_XML_file_name = xml_path;
 		CvRGBCamera_XML_file_name.append("CvRGBCamera.xml");
-		std::vector<std::vector<int> > camera_array(1, std::vector<int> (6) );
+		std::vector<std::vector<float> > camera_array(1, std::vector<float> (6) );
 		if(pXMLTool->setupCvRGBCamera(CvRGBCamera_XML_file_name.c_str(), camera_array) != 0) {
 				std::cerr << "Error! Cannot load CvRGBCamera parameters" << std::endl;
 				exit(-1);
 		}
 
-		std::string GestureThreshold_XML_file_name = dat_path;
+		std::string GestureThreshold_XML_file_name = xml_path;
 		GestureThreshold_XML_file_name.append("GestureThreshold.xml");
-		std::vector<std::vector<int> > threshold_array(1, std::vector<int> (10) );
+		std::vector<std::vector<int> > threshold_array(1, std::vector<int> (8) );
 		if(pXMLTool->setupGestureThreshold(GestureThreshold_XML_file_name.c_str(), threshold_array) != 0) {
 				std::cerr << "Error! Cannot load BinaryFilter parameters" << std::endl;
 				exit(-1);
 		}
 
-		std::string ROI_XML_file_name = dat_path;
-		ROI_XML_file_name.append("BinaryFilter.xml");
+		std::string ROI_XML_file_name = xml_path;
+		ROI_XML_file_name.append("ROI.xml");
 		std::vector<std::vector<int> > ROI_array(1, std::vector<int> (5) );
 		if(pXMLTool->setupROI(ROI_XML_file_name.c_str(), ROI_array) != 0) {
 				std::cerr << "Error! Cannot load BinaryFilter parameters" << std::endl;
 				exit(-1);
 		}
 
-		int camera_id = camera_array[0][0];
-		int camera_x = camera_array[0][1];
-		int camera_y = camera_array[0][2];
-		int camera_fps = camera_array[0][3];
-		int camera_brightness = camera_array[0][4];
-		int camera_contrast = camera_array[0][5];
+		std::string VirtualInput_XML_file_name = xml_path;
+		VirtualInput_XML_file_name.append("0.xml");
+		std::vector<std::vector<int> > key_array(8, std::vector<int> (4) );
+		if(pXMLTool->setupVirtualInputKeyMap(VirtualInput_XML_file_name.c_str(), key_array) != 0) {
+				std::cerr << "Error! Cannot initial kep map" << std::endl;
+				exit(-1);
+		}
+
+		int camera_id = (int)camera_array[0][0];
+		int camera_x = (int)camera_array[0][1];
+		int camera_y = (int)camera_array[0][2];
+		int camera_fps = (int)camera_array[0][3];
+		float camera_brightness = camera_array[0][4];
+		float camera_contrast = camera_array[0][5];
 
 		int cut_x_lower = ROI_array[0][0]; // 35;
 		int cut_x_upper = ROI_array[0][1]; // 35;
@@ -84,8 +84,6 @@ int main(int argc, char **argv)
 		int threshold_move_y = threshold_array[0][5];// 2;
 		int count_threshold_short = threshold_array[0][6];
 		int count_threshold_long = threshold_array[0][7];;
-		int move_factor = threshold_array[0][8];
-//		int move_step = threshold_array[0][9];
 
 		threshold_key_x_left = threshold_key_x_left * (camera_x/160);
 		threshold_key_x_right = threshold_key_x_right * (camera_x/160);
@@ -134,7 +132,6 @@ int main(int argc, char **argv)
 		}
 
 		pCvRGBCamera->setupAutosizeWindow("frame");
-
 //		pCvRGBCamera->setupOpenGLWindow("hist_x");
 //		pCvRGBCamera->setupOpenGLWindow("pos_x");
 
@@ -142,6 +139,7 @@ int main(int argc, char **argv)
 //		pCvRGBCamera->setupOpenGLWindow("pos_y");
 
 
+		int step;
 		int pos_x, pos_y, pos_pre_x = 0, pos_pre_y = 0, diff_x = 0, diff_y = 0;
 		cv::Mat dist_x = cv::Mat::zeros(1, camera_x, CV_32SC1);
 		cv::Mat dist_y = cv::Mat::zeros(camera_y, 1, CV_32SC1);
@@ -164,6 +162,15 @@ int main(int argc, char **argv)
 
 //				XQueryKeymap(display, return_key);
 //				std::cout << "return_key = " << return_key << std::endl;
+				pCvRGBCamera->showHSVTrackbar("frame", lower1, lower2, lower3, upper1, upper2, upper3);
+
+				pCvRGBCamera->showThresholdTrackbar("frame",threshold_key_x_left, threshold_key_x_right, threshold_key_y_up, threshold_key_y_down, count_threshold_short, count_threshold_long);
+
+				pCvRGBCamera->showROITrackbar("frame",ROI_x_lower, ROI_x_upper, ROI_y_lower, ROI_y_upper, ROI_sum_threshold);
+				ROI_x_length = ROI_x_upper - ROI_x_lower + 1;
+				ROI_y_length = ROI_y_upper - ROI_y_lower + 1;
+				
+
 				pDistribution->imageDist2d(pCvRGBCamera->HSVBinary(lower1, lower2, lower3, upper1, upper2, upper3), (int *)dist_x.data, (int *)dist_y.data);
 				pos_x = pDistribution->imageDistMean((int *)dist_x.data, 0, ROI_x_length, ROI_sum_threshold);
 				pos_y = pDistribution->imageDistMean((int *)dist_y.data, 0, ROI_y_length, ROI_sum_threshold);
@@ -174,7 +181,7 @@ int main(int argc, char **argv)
 //				pCvRGBCamera->showLine("pos_y",pos_y, ROI_y_lower, ROI_y_upper);
 //				std::cerr << "pos_x=" << pos_x << ",diff_x=" << diff_x << ",pos_y=" << pos_y << ",diff_y=" << diff_y << std::endl;
 				if (read_key > 47 && read_key < 58) {  //"0" == 48, "1" == 49, ... , "9" == 57
-						VirtualInput_XML_file_name = dat_path;
+						VirtualInput_XML_file_name = xml_path;
 						VirtualInput_XML_file_name.append(std::to_string(read_key-48)).append(".xml");
 						if(pXMLTool->setupVirtualInputKeyMap(VirtualInput_XML_file_name.c_str(), key_array) == 0) {
 								pVirtualInput->setup(screen_x, screen_y, key_array[0][1]);
@@ -198,24 +205,29 @@ int main(int argc, char **argv)
 						down_count--;
 				} 
 
-				if (pos_x > -1 && pos_y > -1) {
-						if (key_array[0][0] > 0) {
-								dx = diff_x * move_factor;
-								dy = diff_y * move_factor;
-						} else {
-								dx = no_move;
-								dy = no_move;
-						}
-
+                if (pos_x == -1 && pos_y == -1) {
+					    left_count = count_threshold_short;
+						right_count = count_threshold_short;
+						up_count = count_threshold_short;
+						down_count = count_threshold_short;
+				} else {
 						if (diff_x < -threshold_key_x_left && left_count == 0) {
 
-								std::cout << "Detect Left!!" << std::endl;
-								pVirtualInput->control(press, key_array[1][0], key_array[2][0], key_array[3][0], key_array[4][0], dx, no_move);
+								std::cout << "Left!  step=" << key_array[5][0] << ", move_fac=" << key_array[6][0] << ", interval_us=" << key_array[7][0] << std::endl;
+								dx = diff_x * key_array[6][0];
 								if (key_array[0][0] == 0) {
-										usleep(100);
-										pVirtualInput->control(release, key_array[1][0], key_array[2][0], key_array[3][0], key_array[4][0], no_move, no_move);
+										for (step = 0; step < key_array[5][0]; ++step) {
+												pVirtualInput->control(press, key_array[1][0], key_array[2][0], key_array[3][0], key_array[4][0], dx, no_move);
+												usleep(key_array[7][0]);
+												pVirtualInput->control(release, key_array[1][0], key_array[2][0], key_array[3][0], key_array[4][0], no_move, no_move);
+										}		
 										up_count = count_threshold_long;
 										down_count = count_threshold_long;
+								} else {
+										for (step = 0; step < key_array[5][0]; ++step) {
+												pVirtualInput->control(press, key_array[1][0], key_array[2][0], key_array[3][0], key_array[4][0], dx, no_move);
+												usleep(key_array[7][0]);
+										}
 								}
 								left_count = count_threshold_short;
 								right_count = count_threshold_long;
@@ -224,27 +236,44 @@ int main(int argc, char **argv)
 
 						if (diff_x > threshold_key_x_right && right_count == 0) {
 							
-								std::cout << "Detect Right!!" << std::endl;
-								pVirtualInput->control(press, key_array[1][1], key_array[2][1], key_array[3][1], key_array[4][1], dx, no_move);
+								std::cout << "Right! step=" << key_array[5][1] << ", move_fac=" << key_array[6][1] << ", interval_us=" << key_array[7][1] << std::endl;
+								dx = diff_x * key_array[6][1];
 								if (key_array[0][0] == 0) {
-										usleep(100);
-										pVirtualInput->control(release, key_array[1][1], key_array[2][1], key_array[3][1], key_array[4][1], no_move, no_move);
+										for (step = 0; step < key_array[5][1]; ++step) {
+												pVirtualInput->control(press, key_array[1][1], key_array[2][1], key_array[3][1], key_array[4][1], dx, no_move);
+												usleep(key_array[7][1]);
+												pVirtualInput->control(release, key_array[1][1], key_array[2][1], key_array[3][1], key_array[4][1], no_move, no_move);
+										}		
 										up_count = count_threshold_long;
 										down_count = count_threshold_long;
-								}	
+								} else {
+	
+										for (step = 0; step < key_array[5][1]; ++step) {
+												pVirtualInput->control(press, key_array[1][1], key_array[2][1], key_array[3][1], key_array[4][1], dx, no_move);
+												usleep(key_array[7][1]);
+										}
+								}
 								left_count = count_threshold_long;
 								right_count = count_threshold_short;
 						}
 		
 						if (diff_y < -threshold_key_y_up && up_count == 0) {
 
-								std::cout << "Detect Up!!" << std::endl;
-								pVirtualInput->control(press, key_array[1][2], key_array[2][2], key_array[3][2], key_array[4][2], no_move, dy);
+								std::cout << "Up!    step=" << key_array[5][2] << ", move_fac=" << key_array[6][2] << ", interval_us=" << key_array[7][2] << std::endl;
+								dy = diff_y * key_array[6][2];
 								if (key_array[0][0] == 0) {
-										usleep(100);
-										pVirtualInput->control(release, key_array[1][2], key_array[2][2], key_array[3][2], key_array[4][2], no_move, no_move);
+										for (step = 0; step < key_array[5][2]; ++step) {
+												pVirtualInput->control(press, key_array[1][2], key_array[2][2], key_array[3][2], key_array[4][2], no_move, dy);
+												usleep(key_array[7][2]);
+												pVirtualInput->control(release, key_array[1][2], key_array[2][2], key_array[3][2], key_array[4][2], no_move, no_move);
+										}
 										right_count = count_threshold_long;
 										left_count = count_threshold_long;
+								} else {
+										for (step = 0; step < key_array[5][2]; ++step) {
+												pVirtualInput->control(press, key_array[1][2], key_array[2][2], key_array[3][2], key_array[4][2], no_move, dy);
+												usleep(key_array[7][2]);
+										}	
 								}
 								up_count = count_threshold_short;
 								down_count = count_threshold_long;
@@ -252,13 +281,21 @@ int main(int argc, char **argv)
 
 						if (diff_y > threshold_key_y_down && down_count == 0) {
 		
-								std::cout << "Detect Down!!" << std::endl;
-								pVirtualInput->control(press, key_array[1][3], key_array[2][3], key_array[3][3], key_array[4][3], no_move, dy);
+								std::cout << "Down!  step=" << key_array[5][3] << ", move_fac=" << key_array[6][3] << ", interval_us=" << key_array[7][3] << std::endl;
+								dy = diff_y * key_array[6][3];
 								if (key_array[0][0] == 0) {
-										usleep(100);
-										pVirtualInput->control(release, key_array[1][3], key_array[2][3], key_array[3][3], key_array[4][3], no_move, no_move);
+										for (step = 0; step < key_array[5][3]; ++step) {
+												pVirtualInput->control(press, key_array[1][3], key_array[2][3], key_array[3][3], key_array[4][3], no_move, dy);
+												usleep(key_array[7][3]);
+												pVirtualInput->control(release, key_array[1][3], key_array[2][3], key_array[3][3], key_array[4][3], no_move, no_move);
+										}
 										right_count = count_threshold_long;
 										left_count = count_threshold_long;
+								} else {
+										for (step = 0; step < key_array[5][3]; ++step) {
+												pVirtualInput->control(press, key_array[1][3], key_array[2][3], key_array[3][3], key_array[4][3], no_move, dy);
+												usleep(key_array[7][3]);
+										}
 								}
 								up_count = count_threshold_long;
 								down_count = count_threshold_short;	

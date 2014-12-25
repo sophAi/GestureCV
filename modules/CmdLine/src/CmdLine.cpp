@@ -1,10 +1,10 @@
-/* ======================================================================
+/* ============================================================
 File Name     : CmdLine.cpp
 Creation Time : 20141023 17:29:18
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
+=============================================================== */
 #include "CmdLine.h"
 using namespace module_CmdLine;
 
@@ -17,6 +17,10 @@ CmdLine::CmdLine(): input_file(NULL),
 
 }
 
+CmdLine::~CmdLine()
+{
+
+}
 
 void CmdLine::setup(int &argc, char **argv)
 {
@@ -85,12 +89,6 @@ void CmdLine::setup(int &argc, char **argv)
 				            printf("Argument %d: %s\n", i, argv[i]);
 
 	    }
-}
-
-
-CmdLine::~CmdLine()
-{
-
 }
 
 void CmdLine::printUsage(FILE *stream, int exit_code)

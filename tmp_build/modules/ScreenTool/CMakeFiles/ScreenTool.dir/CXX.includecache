@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../modules/ScreenTool/include/ScreenTool.h
+X11/Xlib.h
+-
+
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/ScreenTool/src/ScreenTool.cpp
+ScreenTool.h
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/ScreenTool/src/ScreenTool.h
+

@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC    -shared -Wl,-soname,libScreenTool.so -o ../../../lib/libScreenTool.so CMakeFiles/ScreenTool.dir/src/ScreenTool.cpp.o -lSM -lICE -lX11 -lXext 

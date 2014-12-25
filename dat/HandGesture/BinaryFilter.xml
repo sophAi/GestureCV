@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<BinaryFilter>
+	<lower1>
+		5
+	</lower1>
+	<upper1>
+		30
+	</upper1>
+	<lower2>
+		15
+	</lower2>
+	<upper2>
+		100
+	</upper2>
+	<lower3>
+		161
+	</lower3>
+	<upper3>
+		255
+	</upper3>
+</BinaryFilter>

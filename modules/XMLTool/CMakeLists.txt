@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # Add the libraries required by this module. Leave it blank will use the global_link_list, which may cause some dependency problem when migraing the programs.
 # Options can be empty/none (default), global, or a list of libraries
-set(module_usr_lib_list none)
+set(module_usr_lib_list LibXml2 LibXslt)
 
 #set(project_src
 #"src/main.cpp"
@@ -37,8 +37,26 @@ else ()
 #		find_package(${module_usr_lib}_REQUIRED)
 		if (${lib${module_usr_lib}}_FOUND)
 			message(STATUS "Linking ${module_usr_lib} to lib${PROJECT_NAME}")
-			include_directories(SYSTEM ${${module_usr_lib}_INCLUDE_DIRS})
-			set(module_link_list "${module_link_list};${${lib${module_usr_lib}}_LIBRARIES}")
+# Add system libraries to this module
+			if (NOT "${${lib${module_usr_lib}}_LIBRARIES}" STREQUAL "")
+				message(STATUS "LIBRARIES: ${${lib${module_usr_lib}}_LIBRARIES}")
+				set(module_link_list "${module_link_list};${${lib${module_usr_lib}}_LIBRARIES}")
+			elseif (NOT "${${lib${module_usr_lib}}_LIBRARY}" STREQUAL "")
+				message(STATUS "LIBRARY: ${${lib${module_usr_lib}}_LIBRARY}")
+				set(module_link_list "${module_link_list};${${lib${module_usr_lib}}_LIBRARY}")
+			else ()
+				message(STATUS "LIBRARIES or LIBRARY not defined!")
+			endif ()
+# Include system header file to this module
+			if (NOT "${${lib${module_usr_lib}}_INCLUDE_DIR}" STREQUAL "")
+				message(STATUS "INCLUDE_DIR: ${${lib${module_usr_lib}}_INCLUDE_DIR}")
+				include_directories(SYSTEM ${${lib${module_usr_lib}}_INCLUDE_DIR})
+			elseif (NOT "${${lib${module_usr_lib}}_INCLUDE_DIRS}" STREQUAL "")
+				message(STATUS "INCLUDE_DIRS: ${${lib${module_usr_lib}}_INCLUDE_DIRS}")
+				include_directories(SYSTEM ${${lib${module_usr_lib}}_INCLUDE_DIRS})
+			else ()
+				message(STATUS "INCLUDE_DIRS or INCLUDE_DIR not defined!")
+			endif ()
 		else (${lib${module_usr_lib}}_FOUND)
 			message("${module_usr_lib} not found!")
 		endif (${lib${module_usr_lib}}_FOUND)

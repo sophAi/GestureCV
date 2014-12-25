@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<VitrualInput>
+	<name>
+		Compiz change desktop
+	</name>
+	<description>
+		Ctrl+Alt+left/down/right
+	</description>
+	<detect_mode>
+		key
+	</detect_mode>
+	<move_type>
+		absolute
+	</move_type>
+	<key1>
+		29 29 -1 -1 
+	</key1>
+	<key2>
+		56 56 -1 -1
+	</key2>
+	<key3>
+		105 106 -1 -1
+	</key3>
+	<button>
+		-1 -1 -1 -1
+	</button>
+    <step>
+         1  1  1  1
+    </step>
+    <move_factor>
+         1  1  1  1
+    </move_factor>
+    <interval_us>
+        5000 5000 5000 5000
+    </interval_us>
+</Vitrualinput>
+<!-- Order: left right up down -->
+<!-- detect_mode: key, mouse, and any (for using key and mouse at the same time, only effective on PC -->
+<!-- move_type: absolute or relative -->

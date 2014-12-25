@@ -1,12 +1,12 @@
-/* ======================================================================
+/* ============================================================
 File Name     : CmdLine.h
 Creation Time : 20141023 17:20:58
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
-#ifndef sophAi_CmdLine_H_
-#define sophAi_CmdLine_H_
+=============================================================== */
+#ifndef sophAi_modules_CmdLine_H_
+#define sophAi_modules_CmdLine_H_
 
 #include <stdio.h>
 #include <stdlib.h>

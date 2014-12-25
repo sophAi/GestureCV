@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="yes" encoding="UTF-8"?>
+<GestureThreshold>
+	<threshold_key_left>
+		14
+	</threshold_key_left>
+	<threshold_key_right>
+		14
+	</threshold_key_right>
+	<threshold_key_up>
+		12
+	</threshold_key_up>
+	<threshold_key_down>
+		13
+	</threshold_key_down>
+	<threshold_move_x>
+		6
+	</threshold_move_x>
+	<threshold_move_y>
+		6
+	</threshold_move_y>
+	<count_threshold_short>
+		5
+	</count_threshold_short>
+	<count_threshold_long>
+		10
+	</count_threshold_long>
+</GestureThreshold>

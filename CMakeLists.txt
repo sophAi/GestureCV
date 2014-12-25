@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 2.8)
 #        <<Custom Information. Modify here>>
 
 # Search for the cpp files in src/. Use the primary names only (without path and suffix, ex: use main for src/main.cpp).
-set(exec_list HandGesture send_uinput receive_uinput test_main)  
+set(exec_list ROI HandGesture tran send_uinput receive_uinput)  
 
 set(module_list CmdLine CvRGBCamera VirtualInput ScreenTool Distribution Draw XMLTool)
 
-set(usr_lib_list OpenCV OpenGL OpenMP X11)
+set(usr_lib_list OpenCV OpenGL OpenCL OpenMP X11 GSL LibXml2 LibXslt)
 
 # ======================================================= #
 #              <<Basic Parameters>>
@@ -19,7 +19,7 @@ set(make_exec true)
 set(compiler gcc)
 
 # Custom variable: source directory for compiling executable files
-set(main_src_path "${CMAKE_SOURCE_DIR}/src") 
+set(src_path "${CMAKE_SOURCE_DIR}/src") 
 
 # Custom variable: source directory of modules for libraries
 set(module_path "${CMAKE_SOURCE_DIR}/modules") 
@@ -33,23 +33,35 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
 # Cmake variable: directory of cmake file for finding package or system libraries
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/find.cmake") 
 
-# Define OpenCV_LIBRARIES
-set(libOpenCV OpenCV) 
+# Custom system libraries and headers translation
+# set (lib{Name in usr_lib_list} {Name defined in {Name in usr_lib_list}.cmake})
 
-# Define OPENCL_LIBRARIES
-set(libOpenCL OPENCL) 
+# Define OpenCV_FOUND, OpenCV_LIBRARIES, and OpenCV_INCLUDE_DIRS.
+set(libOpenCV OpenCV)   # Add "OpenCV" in usr_lib_list.
 
-# Define OPENGL_LIBRARIES
-set(libOpenGL OPENGL) 
+# Define OPENCL_FOUND and OPENCL_LIBRARIES. Add "OpenCL" in usr_lib_list.
+set(libOpenCL OPENCL)    
 
-# Define OPENMP_LIBRARIES
-set(libOpenMP OPENMP) 
+# Define OPENGL_FOUND, OPENGL_LIBRARIES, and OPENGL_INCLUDE_DIR.
+set(libOpenGL OPENGL)   # Add "OpenGL" in usr_lib_list.
 
-# Define CUDA_LIBRARIES
-set(libCUDA CUDA)
+# Define OPENMP_FOUND.
+set(libOpenMP OPENMP)   # Add "OpenMP" in usr_lib_list. Note that it defines OpenMP_C_FLAGS and OpenMP_CXX_FLAGS
 
-# Define X11_LIBRARY
-set(libX11 X11)
+# Define CUDA_FOUND, CUDA_LIBRARIES, CUDA_INCLUDE_DIRS.
+set(libCUDA CUDA)  # Add "CUDA" in usr_lib_list.
+
+# Define X11_FOUND, X11_LIBRARIES, and X11_INCLUDE_DIR.
+set(libX11 X11)    # Add "X11" in usr_lib_list.
+
+# Define GSL_FOUND, GSL_LIBRARIES, and GSL_INCLUDE_DIR.
+set(libGSL GSL)    # Add "GSL" in usr_lib_list.
+
+# Define LIBXML2_FOUND, LIBXML2_LIBRARIES, and LIBXML2_INCLUDE_DIR.
+set(libLibXml2 LIBXML2)  # Add "LibXml2" in usr_lib_list.
+
+# Define LIBXSLT_FOUND, LIBXSLT_LIBRARIES, and LIBXSLT_INCLUDE_DIR.
+set(libLibXslt LIBXSLT)  # Add "LibXslt" in usr_lib_list.
 
 set(BUILD_SHARED_LIBS ON)
 
@@ -60,31 +72,63 @@ set(BUILD_SHARED_LIBS ON)
 get_filename_component(current_folder_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 string(REPLACE " " "_" current_folder_name ${current_folder_name})
 project(${current_folder_name})
+message("======== Start Building ========")
+message(STATUS "Project: ${PROJECT_NAME}")
+file(STRINGS "ChangeLog" ChangeLog LIMIT_INPUT 15)
+message(STATUS "Version: ${ChangeLog}")
+message(STATUS "Current directory: ${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Look for package (<Find<package>.cmake) in CMAKE_MODULE_PATH or in /usr/share/cmake-2.x/Modules/
+message(" ")
+message("======== Checking System Libraries ========")
 foreach (usr_lib ${usr_lib_list})
 # Find package in the system
+	message("${usr_lib}:")
     find_package(${usr_lib} REQUIRED)
     if (${lib${usr_lib}}_FOUND)
-	    message(STATUS "Found ${usr_lib}: ${${lib${usr_lib}}_LIBRARIES}")
+# Add system libraries
+		if (NOT "${${lib${usr_lib}}_LIBRARIES}" STREQUAL "")
+			message(STATUS "LIBRARIES: ${${lib${usr_lib}}_LIBRARIES}")
+		    set(global_link_list "${global_link_list};${${lib${usr_lib}}_LIBRARIES}")
+		elseif (NOT "${${lib${usr_lib}}_LIBRARY}" STREQUAL "")
+			message(STATUS "LIBRARY: ${${lib${usr_lib}}_LIBRARY}")
+		    set(global_link_list "${global_link_list};${${lib${usr_lib}}_LIBRARY}")
+		else ()
+			message(STATUS "LIBRARIES or LIBRARY not defined!")
+		endif ()
 # Include system header file
-        include_directories(SYSTEM ${${usr_lib}_INCLUDE_DIRS})
-        set(global_link_list "${global_link_list};${${lib${usr_lib}}_LIBRARIES}")
+		if (NOT "${${lib${usr_lib}}_INCLUDE_DIR}" STREQUAL "")
+			message(STATUS "INCLUDE_DIR: ${${lib${usr_lib}}_INCLUDE_DIR}")
+	        include_directories(SYSTEM ${${lib${usr_lib}}_INCLUDE_DIR})
+		elseif (NOT "${${lib${usr_lib}}_INCLUDE_DIRS}" STREQUAL "")
+			message(STATUS "INCLUDE_DIRS: ${${lib${usr_lib}}_INCLUDE_DIRS}")
+	        include_directories(SYSTEM ${${lib${usr_lib}}_INCLUDE_DIRS})
+		else ()
+			message(STATUS "INCLUDE_DIRS or INCLUDE_DIR not defined!")
+		endif ()
     else (${lib${usr_lib}}_FOUND)
         message("${usr_lib} not found!")
     endif (${lib${usr_lib}}_FOUND)
 endforeach (usr_lib)
 
 # Look for modules in module_path
+message(" ")
+message("======== Building modules ========")
 foreach (module ${module_list})
 # Project include dirs
+	message("lib${module}:")
     include_directories("${module_path}/${module}/include")
 # CMakeList.txt under subdirectories
     add_subdirectory("${module_path}/${module}")
 endforeach (module)
 
+
+# Compiler parameters
+message(" ")
+message("======== Setting Compiling Flags ========")
 # Compiler flags for gcc
 if (${compiler} STREQUAL "gcc")
+    message(STATUS "Setting gcc parameter")
 	set(CMAKE_C_COMPILER gcc)
 	set(CMAKE_CXX_COMPILER g++)
 	set(WARNINGS "-Wall -Wextra -Wunreachable-code -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wswitch-default -Wunused-parameter -Wreturn-type")
@@ -98,18 +142,21 @@ endif (${compiler} STREQUAL "gcc")
 
 # Compiler flags for mpich
 if (${compiler} STREQUAL "mpich")
+    message(STATUS "Setting mpich parameter")
 	set(CMAKE_C_COMPILER mpicc)
 	set(CMAKE_CXX_COMPILER mpicxx)
 endif (${compiler} STREQUAL "mpich")
 
 # Compiler flags for cuda
 if (${compiler} STREQUAL "cuda")
+    message(STATUS "Setting nvcc parameter")
 	set(CMAKE_C_COMPILER nvcc)
 	set(CMAKE_CXX_COMPILER nvcc)
 endif (${compiler} STREQUAL "cuda")
 
 # Compiler flags for intel
 if (${compiler} STREQUAL "intel")
+    message(STATUS "Setting icc parameter")
 	set(CMAKE_C_COMPILER icc)
 	set(CMAKE_CXX_COMPILER icc)
 	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -w")
@@ -136,14 +183,19 @@ endif (${libCUDA}_FOUND)
 #           <<Build executable program>>
 
 if (make_exec)
-	message(STATUS "Searching for the main src in " ${main_src_path})
+	message(" ")
+	message("======== Making Executable Targets ========")
+	message(STATUS "Searching for the main src in " ${src_path})
 	foreach (exec ${exec_list})
 # Make executable targets
         message(STATUS "Making executable " ${exec})
-        add_executable(${exec} "${main_src_path}/${exec}.cpp")
+        add_executable(${exec} "${src_path}/${exec}.cpp")
         target_link_libraries(${exec} ${global_link_list} ${module_list} ${OpenCV_LIB})
 	endforeach (exec)
 endif (make_exec)
 
 message(STATUS "Executable file is in " ${EXECUTABLE_OUTPUT_PATH})
 message(STATUS "Shared libraries are in " ${LIBRARY_OUTPUT_PATH})
+
+message(" ")
+message("======== Build Summaries ========")

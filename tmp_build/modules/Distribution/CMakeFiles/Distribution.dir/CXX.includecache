@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../modules/Distribution/include/Distribution.h
+cstring
+-
+
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/Distribution/src/Distribution.cpp
+Distribution.h
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/Distribution/src/Distribution.h
+iostream
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/Distribution/src/iostream
+

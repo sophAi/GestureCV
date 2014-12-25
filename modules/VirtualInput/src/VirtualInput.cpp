@@ -1,10 +1,10 @@
-/* ======================================================================
+/* ============================================================
 File Name     : VirtualInput.cpp
 Creation Time : 20141023 10:47:23
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
+=============================================================== */
 #include "VirtualInput.h"
 using namespace module_VirtualInput;
 
@@ -14,6 +14,11 @@ struct input_event VirtualInput::event;
 VirtualInput::VirtualInput():fd(-1)
 {
 
+}
+
+VirtualInput::~VirtualInput()
+{
+        VirtualInput::release();
 }
 
 bool VirtualInput::setup(int &screen_width, int &screen_height, int &move_type)
@@ -42,12 +47,17 @@ bool VirtualInput::setup(int &screen_width, int &screen_height, int &move_type)
 		for (int i = 0; i < 256; ++i) {
 				::ioctl(fd, UI_SET_KEYBIT, i);
 		}
+
+		VirtualInput::ev_press = 1;
+		VirtualInput::ev_release = 0;
+		VirtualInput::ev_no_key = -1;
+		VirtualInput::ev_no_button = -1;
 	
 	    if (move_type == 0) {   //ABS
 				VirtualInput::ev_type = EV_ABS;
 				VirtualInput::ev_x = ABS_X;
 				VirtualInput::ev_y = ABS_Y;
-				VirtualInput::ev_check = -1;
+				VirtualInput::ev_no_move = -1;
 				VirtualInput::uidev.absmin[ABS_X] = 0;
 				VirtualInput::uidev.absmax[ABS_X] = screen_width;
 			    VirtualInput::uidev.absfuzz[ABS_X]=0;
@@ -65,7 +75,7 @@ bool VirtualInput::setup(int &screen_width, int &screen_height, int &move_type)
 				VirtualInput::ev_type = EV_REL;
 				VirtualInput::ev_x = REL_X;
 				VirtualInput::ev_y = REL_Y;
-				VirtualInput::ev_check = 0;
+				VirtualInput::ev_no_move = 0;
 		    	::ioctl(fd, UI_SET_KEYBIT, BTN_MOUSE);
 				::ioctl(fd, UI_SET_EVBIT, EV_REL);
 				::ioctl(fd, UI_SET_RELBIT, REL_X);
@@ -98,9 +108,108 @@ bool VirtualInput::setup(int &screen_width, int &screen_height, int &move_type)
     
 }
 
-VirtualInput::~VirtualInput()
+void VirtualInput::oneKey(int &trigger_type, int &key1)
 {
-		VirtualInput::release();
+        ::gettimeofday(&event.time, NULL);
+
+        if (key1 > 0) {
+                event.type = EV_KEY;
+                event.code = key1;
+                event.value = trigger_type;
+                ::write(fd, &event,
+                    sizeof(struct input_event));
+        }
+
+        event.type = EV_SYN;
+        event.code = SYN_REPORT;
+        event.value = 0;
+        ::write(fd, &event, sizeof(struct input_event));
+}
+
+void VirtualInput::twoKeys(int &trigger_type, int &key1, int &key2)
+{
+        ::gettimeofday(&event.time, NULL);
+        memset(&event, 0, sizeof(struct input_event));
+
+        if (key1 > 0) {
+                event.type = EV_KEY;
+                event.code = key1;
+                event.value = trigger_type;
+                ::write(fd, &event, sizeof(struct input_event));
+        }
+
+        if (key2 > 0) {
+                event.type = EV_KEY;
+                event.code = key2;
+                event.value = trigger_type;
+                ::write(fd, &event, sizeof(struct input_event));
+        }
+
+        event.type = EV_SYN;
+        event.code = SYN_REPORT;
+        event.value = 0;
+        ::write(fd, &event, sizeof(struct input_event));
+}
+
+void VirtualInput::threeKeys(int &trigger_type, int &key1, int &key2, int &key3)
+{
+        ::gettimeofday(&event.time, NULL);
+        memset(&event, 0, sizeof(struct input_event));
+
+        if (key1 > 0) {
+                event.type = EV_KEY;
+                event.code = key1;
+                event.value = trigger_type;
+                ::write(fd, &event, sizeof(struct input_event));
+        }
+
+        if (key2 > 0) {
+                event.type = EV_KEY;
+                event.code = key2;
+                event.value = trigger_type;
+                ::write(fd, &event, sizeof(struct input_event));
+        }
+
+        if (key3 > 0) {
+                event.type = EV_KEY;
+                event.code = key3;
+                event.value = trigger_type;
+                ::write(fd, &event, sizeof(struct input_event));
+        }
+
+        event.type = EV_SYN;
+        event.code = SYN_REPORT;
+        event.value = 0;
+        ::write(fd, &event, sizeof(struct input_event));
+}
+
+void VirtualInput::move(int &x, int &y)
+{
+        memset(&event, 0, sizeof(struct input_event));
+        ::gettimeofday(&event.time, NULL);
+        event.type = VirtualInput::ev_type;
+        event.code = VirtualInput::ev_x;
+        event.value = x;
+        ::write(fd, &event, sizeof(struct input_event));
+
+//      ::gettimeofday(&event.time, NULL);
+//      memset(&event, 0, sizeof(struct input_event));
+        event.type = VirtualInput::ev_type;
+        event.code = VirtualInput::ev_y;
+        event.value = y;
+        ::write(fd, &event, sizeof(struct input_event));
+
+//      ::gettimeofday(&event.time, NULL);
+//      memset(&event, 0, sizeof(struct input_event));
+//      event.type = VirtualInput::ev_type;
+//      event.code = ABS_PRESSURE;
+//      event.value = 128;
+        ::write(fd, &event, sizeof(struct input_event));
+
+        event.type = EV_SYN;
+        event.code = SYN_REPORT;
+        event.value = 0;
+        ::write(fd, &event, sizeof(struct input_event));
 }
 
 void VirtualInput::control(int &trigger_type,
@@ -153,14 +262,14 @@ void VirtualInput::control(int &trigger_type,
 					sizeof(struct input_event));
 		}
 
-		if (x != VirtualInput::ev_check) {
+		if (x != VirtualInput::ev_no_move) {
 			    event.type = VirtualInput::ev_type;
 				event.code = VirtualInput::ev_x;
 				event.value = x;
 				::write(fd, &event, sizeof(struct input_event));
 		}
 
-		if (y != VirtualInput::ev_check) {
+		if (y != VirtualInput::ev_no_move) {
 			    event.type = VirtualInput::ev_type;
 			    event.code = VirtualInput::ev_y;
 			    event.value = y;
@@ -175,110 +284,27 @@ void VirtualInput::control(int &trigger_type,
 
 }
 
+void VirtualInput::controlStep(int &trigger_time_us,
+							   int &key1,
+							   int &key2,
+							   int &key3,
+							   int &button,
+							   int &x,
+							   int &y,
+							   int &step,
+							   int &move_factor)
 
-void VirtualInput::move(int &x, int &y)
 {
-		memset(&event, 0, sizeof(struct input_event));
-		::gettimeofday(&event.time, NULL);
-		event.type = VirtualInput::ev_type;
-		event.code = VirtualInput::ev_x;
-		event.value = x;
-		::write(fd, &event, sizeof(struct input_event));
-
-//		::gettimeofday(&event.time, NULL);
-//		memset(&event, 0, sizeof(struct input_event));
-		event.type = VirtualInput::ev_type;
-		event.code = VirtualInput::ev_y;
-		event.value = y;
-		::write(fd, &event, sizeof(struct input_event));
-
-//		::gettimeofday(&event.time, NULL);
-//		memset(&event, 0, sizeof(struct input_event));
-//		event.type = VirtualInput::ev_type;
-//		event.code = ABS_PRESSURE;
-//		event.value = 128;
-		::write(fd, &event, sizeof(struct input_event));
-
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		::write(fd, &event, sizeof(struct input_event));
-}
-
-void VirtualInput::oneKey(int &trigger_type, int &key1)
-{
-	    ::gettimeofday(&event.time, NULL);
-
-		if (key1 > 0) {
-				event.type = EV_KEY;
-		        event.code = key1;
-		        event.value = trigger_type;
-		        ::write(fd, &event, 
-					sizeof(struct input_event));
-	    }
-
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-	    event.value = 0;
-		::write(fd, &event, sizeof(struct input_event));
-}
-
-void VirtualInput::twoKeys(int &trigger_type, int &key1, int &key2)
-{
-		::gettimeofday(&event.time, NULL);
-		memset(&event, 0, sizeof(struct input_event));
-
-	    if (key1 > 0) {
-				event.type = EV_KEY;
-				event.code = key1;
-				event.value = trigger_type;
-				::write(fd, &event, sizeof(struct input_event));
+		int press = 1, release = 0;
+		if (x != VirtualInput::ev_no_move) x = x * move_factor;
+		if (y != VirtualInput::ev_no_move) y = y * move_factor;
+		for (int I0 = 0; I0 < step; ++I0) {
+				VirtualInput::control(press, key1, key2, key3, button, x, y);
+				if (trigger_time_us != -1) {
+						::usleep(trigger_time_us);
+						VirtualInput::control(release, key1, key2, key3, button, VirtualInput::ev_no_move, VirtualInput::ev_no_move);						
+				}
 		}
-
-		if (key2 > 0) {
-				event.type = EV_KEY;
-		        event.code = key2;
-				event.value = trigger_type;
-		        ::write(fd, &event, sizeof(struct input_event));
-		}
-
-		event.type = EV_SYN;
-	    event.code = SYN_REPORT;
-		event.value = 0;
-	    ::write(fd, &event, sizeof(struct input_event));
-}
-
-
-void VirtualInput::threeKeys(int &trigger_type, int &key1, int &key2, int &key3)
-{
-		::gettimeofday(&event.time, NULL);
-		memset(&event, 0, sizeof(struct input_event));
-
-		if (key1 > 0) {
-				event.type = EV_KEY;
-				event.code = key1;
-				event.value = trigger_type;
-				::write(fd, &event, sizeof(struct input_event));
-		}
-
-		if (key2 > 0) {
-				event.type = EV_KEY;
-				event.code = key2;
-				event.value = trigger_type;
-				::write(fd, &event, sizeof(struct input_event));
-		}
-
-		if (key3 > 0) {
-				event.type = EV_KEY;
-				event.code = key3;
-				event.value = trigger_type;
-				::write(fd, &event, sizeof(struct input_event));
-		}
-
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		::write(fd, &event, sizeof(struct input_event));
 }
 
 void VirtualInput::release()

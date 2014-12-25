@@ -1,0 +1,12 @@
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/CmdLine/CMakeFiles/CmdLine.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/CvRGBCamera/CMakeFiles/CvRGBCamera.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/Distribution/CMakeFiles/Distribution.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/Draw/CMakeFiles/Draw.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/CMakeFiles/HandGesture.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/CMakeFiles/ROI.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/ScreenTool/CMakeFiles/ScreenTool.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/VirtualInput/CMakeFiles/VirtualInput.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/modules/XMLTool/CMakeFiles/XMLTool.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/CMakeFiles/receive_uinput.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/CMakeFiles/send_uinput.dir
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/tmp_build/CMakeFiles/tran.dir

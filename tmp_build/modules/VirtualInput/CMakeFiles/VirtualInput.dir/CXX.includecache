@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../modules/VirtualInput/include/VirtualInput.h
+cstring
+-
+iostream
+-
+unistd.h
+-
+fcntl.h
+-
+sys/time.h
+-
+linux/input.h
+-
+linux/uinput.h
+-
+
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/VirtualInput/src/VirtualInput.cpp
+VirtualInput.h
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/VirtualInput/src/VirtualInput.h
+

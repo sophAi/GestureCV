@@ -1,12 +1,12 @@
-/* ======================================================================
+/* ============================================================
 File Name     : VirtualInput.h
 Creation Time : 20141022 17:27:46
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
-#ifndef sophAi_VirtualInput_H_
-#define sophAi_VirtualInput_H_
+=============================================================== */
+#ifndef sophAi_modules_VirtualInput_H_
+#define sophAi_modules_VirtualInput_H_
 
 #include <cstring>
 #include <iostream>
@@ -37,6 +37,16 @@ class VirtualInput
 					 int &x,             //Mouse move that != 0, ABS coordinate (touchscrene) that > -1, or REL_HWHEEL movement that != 0.
 					 int &y);            //Mouse move that != 0, ABS coordinate (touchscreen) that > -1, or REL_WHEEL movement that != 0.
 
+		void controlStep(int &trigger_time_us,
+						 int &key1,
+						 int &key2,
+						 int &key3,
+						 int &button,
+						 int &x,
+						 int &y,
+						 int &step,
+						 int &move_factor);
+
 		void oneKey(int &trigger, int &key1);
 
 		void twoKeys(int &trigger, int &key1, int &key2);
@@ -49,7 +59,8 @@ class VirtualInput
 	private:
 
 		int fd;
-		int ev_x, ev_y, ev_type, ev_check;
+		int ev_x, ev_y, ev_type;
+		int ev_no_move, ev_no_key, ev_no_button, ev_press, ev_release;
 		static struct uinput_user_dev uidev;
 		static struct input_event event;
 

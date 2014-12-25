@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../modules/XMLTool/include/XMLTool.h
+iostream
+-
+fstream
+-
+vector
+-
+
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/XMLTool/src/XMLTool.cpp
+XMLTool.h
+/home/xanadu/rsync_data/Programming/OpenCV/Machine/modules/XMLTool/src/XMLTool.h
+

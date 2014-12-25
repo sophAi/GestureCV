@@ -1,9 +1,10 @@
-/* ======================================================================
+/* ===========================================================
 File Name     : histogram.cpp
 Creation Time : 20140925 17:23:55
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
-========================================================================= */
+See the README file in the top-level directory for license.
+=============================================================== */
 #include "Distribution.h"
 #include "iostream"
 using namespace module_Distribution;
@@ -37,47 +38,6 @@ void Distribution::imageROI(int x_lower, int x_upper, int y_lower, int y_upper)
 }
 
 
-/*void Distribution::Distribution_2D(const cv::Mat &binaryData,
-								   cv::Mat &xDistribution, 
-								   cv::Mat &yDistribution,
-								   int &xmean,
-								   int &xvar,
-								   int &ymean,
-								   int &yvar)
-// Input binaryData and output x-distribution and y-distribution
-
-{
-// Create 1xbinaryData.cols matrix with all zeros
-		xDistribution = cv::Mat::zeros(1, 
-								       binaryData.cols, 
-								       CV_32SC1);
-// Create binaryData.rowsx1 matrix with all zeros
-		yDistribution = cv::Mat::zeros(binaryData.rows, 
-								       1, 
-								       CV_32SC1);
-
-//  Assigned the matrix data to binaryArray, horizontalArray, and verticalArray
-		uchar *binaryArray = binaryData.data;
-		uint32_t *xArray = (uint32_t *)xDistribution.data;
-		uint32_t *yArray = (uint32_t *)yDistribution.data;
-
-		for (int y_id = 0; y_id < binaryData.rows; ++y_id)
-		{
-				for (int x_id = 0; x_id < binaryData.cols; ++x_id)
-				{
-						if (*binaryArray != 0)//Scan from the beginning address of binaryArray
-						{
-								++xArray[x_id];
-								++yArray[y_id];
-						}
-
-						++binaryArray;//Scan next data of *binaryArray. binaryArray is representing the address
-				}		
-		}
-		
-}
-*/
-
 void Distribution::imageDist2d(unsigned char *input_array,
 						   int *x_dist_array,
 						   int *y_dist_array)
@@ -101,33 +61,37 @@ void Distribution::imageDist2d(unsigned char *input_array,
 int Distribution::imageDistMean(int *dist_array, int lower_id, int upper_id, int threshold)
 {
 		int weight_sum = 0;
-		int sum = 0;
+		Distribution::dist_sum = 0;
 		for (int i = lower_id; i < upper_id; ++i) {
 				weight_sum = weight_sum + i * (*(dist_array+i));
-				sum = sum + (*(dist_array+i));
+				Distribution::dist_sum = Distribution::dist_sum + (*(dist_array+i));
 		}
 //		std::cout << "sum=" << sum <<std::endl;
-		if (sum > threshold) {
-				return (int)((float)weight_sum/(float)sum);
+		if (Distribution::dist_sum > threshold) {
+				Distribution::image_dist_mean = (int)((float)weight_sum/(float)Distribution::dist_sum);
+				return Distribution::image_dist_mean;
 		} else {
 				return -1;
 		}
 }
 
-int Distribution::imageDistVar(int *dist_array, 
-				  int *dist_mean)
+int Distribution::imageDistVar(int *dist_array, int lower_id, int upper_id)
+{
+		int diff_temp, var_x = 0, var_xi = 0;
+		for (int i = lower_id; i < upper_id; ++i) {
+				diff_temp = *(dist_array+i) - Distribution::image_dist_mean;
+				var_xi = var_xi + i * diff_temp;
+				var_x = var_x + i * diff_temp*diff_temp;
+		}
+		return (var_x - (var_xi * var_xi)/Distribution::dist_sum)/(Distribution::dist_sum-1);
+}
+
+int Distribution::imageDistSkew(int *dist_array, int lower_id, int upper_id)
 {
 
 }
 
-int Distribution::imageDistSkew(int *dist_array, 
-			       int* dist_mean)
-{
-
-}
-
-int Distribution::imageDistKurtosis(int *dist_array, 
-								 int *dist_mean)
+int Distribution::imageDistKurt(int *dist_array, int lower_id, int upper_id)
 {
 
 }

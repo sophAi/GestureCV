@@ -1,10 +1,10 @@
-/* ======================================================================
+/* ============================================================
 File Name     : XMLTool.cpp
 Creation Time : 20141117 16:43:43
-========================================================================= 
+=============================================================== 
 Copyright (c),2014-, Po-Jen Hsu.  Contact: clusterga@gmail.com
 See the README file in the top-level directory for license.
-========================================================================= */
+=============================================================== */
 #include "XMLTool.h"
 using namespace module_XMLTool;
 
@@ -59,6 +59,15 @@ int XMLTool::setupVirtualInputKeyMap(const char *file_name, std::vector<std::vec
 			if (XML_tag.find("<button>")!=std::string::npos) {
 					XML_file >> key_array[4][0] >> key_array[4][1] >> key_array[4][2] >> key_array[4][3];
 			}
+			if (XML_tag.find("<step>")!=std::string::npos) {
+					XML_file >> key_array[5][0] >> key_array[5][1] >> key_array[5][2] >> key_array[5][3];
+			}
+			if (XML_tag.find("<move_factor>")!=std::string::npos) {
+					XML_file >> key_array[6][0] >> key_array[6][1] >> key_array[6][2] >> key_array[6][3];
+			}
+			if (XML_tag.find("<interval_us>")!=std::string::npos) {
+					XML_file >> key_array[7][0] >> key_array[7][1] >> key_array[7][2] >> key_array[7][3];
+			}
 		}
 /*		for (int i = 0; i < VirtualInputXML_Y_DIM; ++i) {
 				for (int j = 0; j < VirtualInputXML_X_DIM; ++j) {
@@ -102,7 +111,7 @@ int XMLTool::setupBinaryFilter(const char *file_name, std::vector<std::vector<in
 		return 0;
 }
 
-int XMLTool::setupCvRGBCamera(const char *file_name, std::vector<std::vector<int> > &camera_array)
+int XMLTool::setupCvRGBCamera(const char *file_name, std::vector<std::vector<float> > &camera_array)
 {
 		std::string XML_header, XML_name, XML_description, XML_tag;
         std::ifstream XML_file;
@@ -164,12 +173,6 @@ int XMLTool::setupGestureThreshold(const char *file_name, std::vector<std::vecto
 			}
             if (XML_tag.find("<count_threshold_long>")!=std::string::npos) {
 					XML_file >> threshold_array[0][7];
-			}
-            if (XML_tag.find("<move_factor>")!=std::string::npos) {
-					XML_file >> threshold_array[0][8];
-			}
-            if (XML_tag.find("<move_step>")!=std::string::npos) {
-					XML_file >> threshold_array[0][9];
 			}
 		}
         XML_file.close();
